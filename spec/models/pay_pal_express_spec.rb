@@ -41,6 +41,7 @@ describe Spree::Gateway::PayPalExpress do
             PayerID: "fake_payer_id",
             PaymentDetails: pp_details_response.get_express_checkout_details_response_details.PaymentDetails
           }})
+
     end
 
     # Test for #11
@@ -52,6 +53,10 @@ describe Spree::Gateway::PayPalExpress do
       )
       allow(response).
         to receive_message_chain("do_express_checkout_payment_response_details.payment_info.first.transaction_id").and_return '12345'
+
+      allow(response).to receive(:to_hash).and_return({})
+
+
       expect(provider).
         to receive(:do_express_checkout_payment).
         and_return(response)
@@ -69,6 +74,8 @@ describe Spree::Gateway::PayPalExpress do
 
       allow(response).
         to receive_message_chain("do_express_checkout_payment_response_details.payment_info.first.transaction_id").and_return '12345'
+
+      allow(response).to receive(:to_hash).and_return({message: "An error goes here."})
 
       expect(provider).to receive(:do_express_checkout_payment).and_return(response)
 
