@@ -13,3 +13,6 @@ rspec.failures
 .idea
 .ruby-version
 .ruby-gemset
+.bundle
+.generators
+vendor/bundle
