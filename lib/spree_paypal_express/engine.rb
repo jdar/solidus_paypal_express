@@ -12,8 +12,10 @@ module SpreePaypalExpress
     end
 
     def self.activate
-      Dir.glob(File.join(File.dirname(__FILE__), '../../app/**/*_decorator*.rb')) do |c|
-        Rails.configuration.cache_classes ? require(c) : load(c)
+      if self.backend_available?
+        Dir.glob(File.join(File.dirname(__FILE__), '../../app/**/*_decorator*.rb')) do |c|
+          Rails.configuration.cache_classes ? require(c) : load(c)
+        end
       end
     end
 
@@ -21,6 +23,14 @@ module SpreePaypalExpress
 
     initializer "spree.paypal_express.payment_methods", after: "spree.register.payment_methods" do |app|
       app.config.spree.payment_methods << Spree::Gateway::PayPalExpress
+    end
+
+    def self.backend_available?
+      @@backend_available ||= ::Rails::Engine.subclasses.map(&:instance).map{ |e| e.class.to_s }.include?('Spree::Backend::Engine')
+    end
+
+    def self.frontend_available?
+      @@frontend_available ||= ::Rails::Engine.subclasses.map(&:instance).map{ |e| e.class.to_s }.include?('Spree::Frontend::Engine')
     end
   end
 end
